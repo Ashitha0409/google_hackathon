@@ -34,6 +34,7 @@ import {
   LogOut,
   Bell,
   MessageSquare,
+  LucideIcon,
 } from "lucide-react"
 import { DashboardHome } from "@/components/dashboard-home"
 import { HeatmapView } from "@/components/heatmap-view"
@@ -42,26 +43,45 @@ import { GeminiSummaries } from "@/components/gemini-summaries"
 import { TaskManagement } from "@/components/task-management"
 import { ResponderDispatch } from "@/components/responder-dispatch"
 import { AlertsView } from "@/components/alerts-view"
-import { LostAndFound } from "@/components/lost-and-found"
+import { LostAndFound } from "./lost-and-found"
 import { IncidentReporting } from "@/components/incident-reporting"
 
+// Define types directly in dashboard.tsx
+type UserRole = 'admin' | 'responder' | 'user';
+
+interface User {
+  id: string;
+  email: string;
+  role: UserRole;
+  name: string;
+  zone?: string;
+  uid?: string;
+  displayName?: string;
+}
+
+interface MenuItem {
+  id: string;
+  label: string;
+  icon: LucideIcon;
+}
+
 interface DashboardProps {
-  user: any
-  onLogout: () => void
+  user: User;
+  onLogout: () => void;
 }
 
 export function Dashboard({ user, onLogout }: DashboardProps) {
-  const [activeView, setActiveView] = useState("home")
+  const [activeView, setActiveView] = useState<string>("home")
 
-  const getMenuItems = () => {
-    const commonItems = [
+  const getMenuItems = (): MenuItem[] => {
+    const commonItems: MenuItem[] = [
       { id: "home", label: "Dashboard", icon: Home },
       { id: "heatmap", label: "Heatmap", icon: Map },
       { id: "predictions", label: "Predictions", icon: TrendingUp },
       { id: "summaries", label: "AI Summaries", icon: Brain },
     ]
 
-    const roleSpecificItems = {
+    const roleSpecificItems: Record<UserRole, MenuItem[]> = {
       admin: [
         ...commonItems,
         { id: "tasks", label: "Task Management", icon: ClipboardList },
@@ -217,3 +237,6 @@ export function Dashboard({ user, onLogout }: DashboardProps) {
     </SidebarProvider>
   )
 }
+
+// Also export the types if needed elsewhere
+export type { User, UserRole };
